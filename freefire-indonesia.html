@@ -319,9 +319,10 @@
             <!-- Order Form with FormSubmit -->
             <form
               id="orderForm"
-              action="https://formsubmit.co/cbuilderit@gmail.com"
+              action="https://formsubmit.co/ajax/cbuilderit@gmail.com"
               method="POST"
               enctype="multipart/form-data"
+              onsubmit="submitForm(event)"
             >
               <!-- FormSubmit Configuration -->
               <input type="hidden" name="_subject" id="emailSubject" />
@@ -497,6 +498,7 @@
               <input type="hidden" id="packagePrice" name="Package_Price" />
               <input type="hidden" id="orderId" name="Order_ID" />
               <input type="hidden" id="orderDate" name="Order_Date" />
+              <input type="hidden" id="gameName" value="Free Fire Indonesia" />
 
               <!-- Payment Slip Upload - WORKS WITH FORMSUBMIT! -->
               <div class="mb-3">
@@ -663,13 +665,57 @@
         });
 
         // Handle form submission
-        orderForm.addEventListener("submit", function (e) {
-          // Form will submit naturally via FormSubmit
+        async function submitForm(e) {
+          e.preventDefault();
+          
           // Show loading state
           const submitBtn = orderForm.querySelector(".btn-submit-order");
-          submitBtn.innerHTML =
-            '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
           submitBtn.disabled = true;
+
+          // Get form data
+          const formData = new FormData(orderForm);
+          const gameId = document.getElementById("gameId").value.trim();
+          const username = document.getElementById("username").value.trim();
+          const phoneNumber = document.getElementById("phoneNumber").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const packageName = document.getElementById("packageName").value;
+          const packagePrice = document.getElementById("packagePrice").value;
+          const orderId = document.getElementById("orderId").value;
+          const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+          // Store data in sessionStorage
+          sessionStorage.setItem(
+            "orderData",
+            JSON.stringify({
+              game: "Free Fire Indonesia",
+              gameId,
+              username,
+              phoneNumber,
+              email,
+              packageName,
+              packagePrice,
+              orderId,
+              paymentMethod,
+            })
+          );
+
+          try {
+            const response = await fetch('https://formsubmit.co/ajax/cbuilderit@gmail.com', {
+              method: 'POST',
+              body: formData
+            });
+
+            if (response.ok) {
+              window.location.href = './index.html';
+            } else {
+              throw new Error('Form submission failed');
+            }
+          } catch (error) {
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Order & Continue to WhatsApp';
+            submitBtn.disabled = false;
+            alert('There was an error submitting your order. Please try again.');
+          }
 
           // Get form data for WhatsApp
           const gameId = document.getElementById("gameId").value.trim();

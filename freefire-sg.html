@@ -555,9 +555,10 @@
             <!-- Order Form with FormSubmit -->
             <form
               id="orderForm"
-              action="https://formsubmit.co/cbuilderit@gmail.com"
+              action="https://formsubmit.co/ajax/cbuilderit@gmail.com"
               method="POST"
               enctype="multipart/form-data"
+              onsubmit="submitForm(event)"
             >
               <!-- FormSubmit Configuration -->
               <input type="hidden" name="_subject" id="emailSubject" />
@@ -733,6 +734,7 @@
               <input type="hidden" id="packagePrice" name="Package_Price" />
               <input type="hidden" id="orderId" name="Order_ID" />
               <input type="hidden" id="orderDate" name="Order_Date" />
+              <input type="hidden" id="gameName" value="Free Fire SG" />
 
               <!-- Payment Slip Upload - WORKS WITH FORMSUBMIT! -->
               <div class="mb-3">
