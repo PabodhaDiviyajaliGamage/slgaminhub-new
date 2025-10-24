@@ -102,6 +102,11 @@
               </div>
               <h3 class="package-name">Weekly</h3>
               <p class="package-price">Rs.700.00</p>
+              <div class="quantity-control">
+                <button class="btn-quantity" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1" max="99" readonly>
+                <button class="btn-quantity" onclick="updateQuantity(this, 1)">+</button>
+              </div>
               <button class="btn-order">Order Now</button>
             </div>
           </div>
@@ -496,6 +501,7 @@
               <!-- Hidden Package Details -->
               <input type="hidden" id="packageName" name="Package_Name" />
               <input type="hidden" id="packagePrice" name="Package_Price" />
+              <input type="hidden" id="packageQuantity" name="Package_Quantity" value="1" />
               <input type="hidden" id="orderId" name="Order_ID" />
               <input type="hidden" id="orderDate" name="Order_Date" />
               <input type="hidden" id="gameName" value="Free Fire Indonesia" />
@@ -641,14 +647,16 @@
             e.preventDefault();
 
             const packageName = card.getAttribute("data-package");
-            const packagePrice = card.getAttribute("data-price");
+            const basePrice = card.getAttribute("data-price");
+            const quantityInput = card.querySelector(".quantity-input");
+            const quantity = parseInt(quantityInput.value);
+            const totalPrice = (parseFloat(basePrice) * quantity).toFixed(2);
 
-            document.getElementById("selectedPackageName").textContent =
-              packageName;
-            document.getElementById("selectedPackagePrice").textContent =
-              "Rs." + packagePrice;
+            document.getElementById("selectedPackageName").textContent = `${packageName} × ${quantity}`;
+            document.getElementById("selectedPackagePrice").textContent = `Rs.${totalPrice}`;
             document.getElementById("packageName").value = packageName;
-            document.getElementById("packagePrice").value = packagePrice;
+            document.getElementById("packagePrice").value = totalPrice;
+            document.getElementById("packageQuantity").value = quantity;
 
             // Generate Order ID and Date
             const orderId = "FFSG" + Date.now().toString().slice(-8);
@@ -758,9 +766,10 @@
 
           // Create WhatsApp message
           const messageText =
-            `🎮 *New Order - Free Fire (SG)*\n\n` +
+            `🎮 *New Order - Free Fire Indonesia*\n\n` +
             `📋 *Order ID:* ${data.orderId}\n` +
             `📦 *Package:* ${data.packageName}\n` +
+            `📊 *Quantity:* ${data.packageQuantity}\n` +
             `💰 *Price:* Rs.${data.packagePrice}\n\n` +
             `👤 *Customer Details:*\n` +
             `🎯 Game ID: ${data.gameId}\n` +
@@ -913,7 +922,8 @@
     </style>
 
     <!-- Custom JS -->
-    <script src="script.js"></script>
-    <script src="freefire-sg.js"></script>
+    <script src="./assets/script.js"></script>
+    <script src="./assets/package-controls.js"></script>
+    <script src="./assets/freefire-sg.js"></script>
   </body>
 </html>
